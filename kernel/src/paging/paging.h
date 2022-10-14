@@ -15,14 +15,14 @@ enum PT_Flag {
     NX = 63 // only if supported
 };
 
-struct PageDirectoryEntry {
+struct EntradaDiretorioDePagina {
     uint64_t Value;
     void SetFlag(PT_Flag flag, bool enabled);
     bool GetFlag(PT_Flag flag);
     void SetAddress(uint64_t address);
-    uint64_t GetAddress();
+    uint64_t GetEndereco();
 };
 
-struct PageTable { 
-    PageDirectoryEntry entries [512];
+struct TabelaDePagina { 
+    EntradaDiretorioDePagina entries [512];
 }__attribute__((aligned(0x1000)));

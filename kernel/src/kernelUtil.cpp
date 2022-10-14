@@ -16,7 +16,7 @@ void PrepareMemory(BootInfo* bootInfo){
 
     GlobalAllocator.LockPages(&_KernelStart, kernelPages);
 
-    PageTable* PML4 = (PageTable*)GlobalAllocator.RequestPage();
+    TabelaDePagina* PML4 = (TabelaDePagina*)GlobalAllocator.RequestPage();
     memset(PML4, 0, 0x1000);
 
     gerenciadorTabelaDePaginas = GerenciadorTabelaDePaginas(PML4);

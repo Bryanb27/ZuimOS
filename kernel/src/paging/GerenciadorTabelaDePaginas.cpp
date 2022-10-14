@@ -4,18 +4,18 @@
 #include "AlocadorDePageFrame.h"
 #include "../memory.h"
 
-GerenciadorTabelaDePaginas::GerenciadorTabelaDePaginas(PageTable* PML4Address){
-    this->PML4 = PML4Address;
+GerenciadorTabelaDePaginas::GerenciadorTabelaDePaginas(TabelaDePagina* enderecoPML4){
+    this->PML4 = enderecoPML4;
 }
 
-void GerenciadorTabelaDePaginas::MapMemory(void* virtualMemory, void* physicalMemory){
-    PageMapIndexer indexer = PageMapIndexer((uint64_t)virtualMemory);
-    PageDirectoryEntry PDE;
+void GerenciadorTabelaDePaginas::MapMemory(void* memoriaVirtual, void* memoriaFisica){
+    PageMapIndexer indexer = PageMapIndexer((uint64_t)memoriaVirtual);
+    EntradaDiretorioDePagina PDE;
 
     PDE = PML4->entries[indexer.PDP_i];
-    PageTable* PDP;
+    TabelaDePagina* PDP;
     if (!PDE.GetFlag(PT_Flag::Present)){
-        PDP = (PageTable*)GlobalAllocator.RequestPage();
+        PDP = (TabelaDePagina*)GlobalAllocator.RequestPage();
         memset(PDP, 0, 0x1000);
         PDE.SetAddress((uint64_t)PDP >> 12);
         PDE.SetFlag(PT_Flag::Present, true);
@@ -24,14 +24,14 @@ void GerenciadorTabelaDePaginas::MapMemory(void* virtualMemory, void* physicalMe
     }
     else
     {
-        PDP = (PageTable*)((uint64_t)PDE.GetAddress() << 12);
+        PDP = (TabelaDePagina*)((uint64_t)PDE.GetEndereco() << 12);
     }
     
     
     PDE = PDP->entries[indexer.PD_i];
-    PageTable* PD;
+    TabelaDePagina* PD;
     if (!PDE.GetFlag(PT_Flag::Present)){
-        PD = (PageTable*)GlobalAllocator.RequestPage();
+        PD = (TabelaDePagina*)GlobalAllocator.RequestPage();
         memset(PD, 0, 0x1000);
         PDE.SetAddress((uint64_t)PD >> 12);
         PDE.SetFlag(PT_Flag::Present, true);
@@ -40,13 +40,13 @@ void GerenciadorTabelaDePaginas::MapMemory(void* virtualMemory, void* physicalMe
     }
     else
     {
-        PD = (PageTable*)((uint64_t)PDE.GetAddress() << 12);
+        PD = (TabelaDePagina*)((uint64_t)PDE.GetEndereco() << 12);
     }
 
     PDE = PD->entries[indexer.PT_i];
-    PageTable* PT;
+    TabelaDePagina* PT;
     if (!PDE.GetFlag(PT_Flag::Present)){
-        PT = (PageTable*)GlobalAllocator.RequestPage();
+        PT = (TabelaDePagina*)GlobalAllocator.RequestPage();
         memset(PT, 0, 0x1000);
         PDE.SetAddress((uint64_t)PT >> 12);
         PDE.SetFlag(PT_Flag::Present, true);
@@ -55,11 +55,11 @@ void GerenciadorTabelaDePaginas::MapMemory(void* virtualMemory, void* physicalMe
     }
     else
     {
-        PT = (PageTable*)((uint64_t)PDE.GetAddress() << 12);
+        PT = (TabelaDePagina*)((uint64_t)PDE.GetEndereco() << 12);
     }
 
     PDE = PT->entries[indexer.P_i];
-    PDE.SetAddress((uint64_t)physicalMemory >> 12);
+    PDE.SetAddress((uint64_t)memoriaFisica >> 12);
     PDE.SetFlag(PT_Flag::Present, true);
     PDE.SetFlag(PT_Flag::ReadWrite, true);
     PT->entries[indexer.P_i] = PDE;

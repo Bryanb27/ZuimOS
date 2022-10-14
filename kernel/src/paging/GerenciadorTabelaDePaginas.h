@@ -3,7 +3,7 @@
 
 class GerenciadorTabelaDePaginas {
     public:
-    GerenciadorTabelaDePaginas(PageTable* PML4Address);
-    PageTable* PML4;
-    void MapMemory(void* virtualMemory, void* physicalMemory);
+    GerenciadorTabelaDePaginas(TabelaDePagina* enderecoPML4);
+    TabelaDePagina* PML4;
+    void MapMemory(void* memoriaVirtual, void* memoriaFisica);
 };
