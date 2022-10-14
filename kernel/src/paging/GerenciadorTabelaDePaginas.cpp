@@ -15,7 +15,7 @@ void GerenciadorTabelaDePaginas::MapMemory(void* memoriaVirtual, void* memoriaFi
     PDE = PML4->entries[indexer.PDP_i];
     TabelaDePagina* PDP;
     if (!PDE.GetFlag(PT_Flag::Present)){
-        PDP = (TabelaDePagina*)GlobalAllocator.RequestPage();
+        PDP = (TabelaDePagina*)AlocadorGlobal.RequisitarPagina();
         memset(PDP, 0, 0x1000);
         PDE.SetAddress((uint64_t)PDP >> 12);
         PDE.SetFlag(PT_Flag::Present, true);
@@ -31,7 +31,7 @@ void GerenciadorTabelaDePaginas::MapMemory(void* memoriaVirtual, void* memoriaFi
     PDE = PDP->entries[indexer.PD_i];
     TabelaDePagina* PD;
     if (!PDE.GetFlag(PT_Flag::Present)){
-        PD = (TabelaDePagina*)GlobalAllocator.RequestPage();
+        PD = (TabelaDePagina*)AlocadorGlobal.RequisitarPagina();
         memset(PD, 0, 0x1000);
         PDE.SetAddress((uint64_t)PD >> 12);
         PDE.SetFlag(PT_Flag::Present, true);
@@ -46,7 +46,7 @@ void GerenciadorTabelaDePaginas::MapMemory(void* memoriaVirtual, void* memoriaFi
     PDE = PD->entries[indexer.PT_i];
     TabelaDePagina* PT;
     if (!PDE.GetFlag(PT_Flag::Present)){
-        PT = (TabelaDePagina*)GlobalAllocator.RequestPage();
+        PT = (TabelaDePagina*)AlocadorGlobal.RequisitarPagina();
         memset(PT, 0, 0x1000);
         PDE.SetAddress((uint64_t)PT >> 12);
         PDE.SetFlag(PT_Flag::Present, true);

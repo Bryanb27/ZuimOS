@@ -4,7 +4,7 @@ uint64_t freeMemory;
 uint64_t reservedMemory;
 uint64_t usedMemory;
 bool Initialized = false;
-AlocadorDePageFrame GlobalAllocator;
+AlocadorDePageFrame AlocadorGlobal;
 
 void AlocadorDePageFrame::ReadEFIMemoryMap(EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapTamanho, size_t mMapTamanhoDesc){
     if (Initialized) return;
@@ -51,7 +51,7 @@ void AlocadorDePageFrame::InitBitmap(size_t bitmapSize, void* bufferAddress){
     }
 }
 uint64_t pageBitmapIndex = 0;
-void* AlocadorDePageFrame::RequestPage(){
+void* AlocadorDePageFrame::RequisitarPagina(){
     for (; pageBitmapIndex < PageBitmap.Size * 8; pageBitmapIndex++){
         if (PageBitmap[pageBitmapIndex] == true) continue;
         LockPage((void*)(pageBitmapIndex * 4096));

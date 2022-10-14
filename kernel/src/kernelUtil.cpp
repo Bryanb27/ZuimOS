@@ -8,15 +8,15 @@ GerenciadorTabelaDePaginas gerenciadorTabelaDePaginas = NULL;
 void PrepareMemory(BootInfo* bootInfo){
     uint64_t mMapEntradas = bootInfo->mMapTamanho / bootInfo->mMapTamanhoDesc;
 
-    GlobalAllocator = AlocadorDePageFrame();
-    GlobalAllocator.ReadEFIMemoryMap(bootInfo->mMap, bootInfo->mMapTamanho, bootInfo->mMapTamanhoDesc);
+    AlocadorGlobal = AlocadorDePageFrame();
+    AlocadorGlobal.ReadEFIMemoryMap(bootInfo->mMap, bootInfo->mMapTamanho, bootInfo->mMapTamanhoDesc);
 
     uint64_t kernelSize = (uint64_t)&_KernelEnd - (uint64_t)&_KernelStart;
     uint64_t kernelPages = (uint64_t)kernelSize / 4096 + 1;
 
-    GlobalAllocator.LockPages(&_KernelStart, kernelPages);
+    AlocadorGlobal.LockPages(&_KernelStart, kernelPages);
 
-    TabelaDePagina* PML4 = (TabelaDePagina*)GlobalAllocator.RequestPage();
+    TabelaDePagina* PML4 = (TabelaDePagina*)AlocadorGlobal.RequisitarPagina();
     memset(PML4, 0, 0x1000);
 
     gerenciadorTabelaDePaginas = GerenciadorTabelaDePaginas(PML4);
@@ -27,7 +27,7 @@ void PrepareMemory(BootInfo* bootInfo){
 
     uint64_t fbBase = (uint64_t)bootInfo->framebuffer->EnderecoBase;
     uint64_t fbSize = (uint64_t)bootInfo->framebuffer->BufferSize + 0x1000;
-    GlobalAllocator.LockPages((void*)fbBase, fbSize/ 0x1000 + 1);
+    AlocadorGlobal.LockPages((void*)fbBase, fbSize/ 0x1000 + 1);
     for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096){
         gerenciadorTabelaDePaginas.MapMemory((void*)t, (void*)t);
     }
@@ -40,7 +40,7 @@ void PrepareMemory(BootInfo* bootInfo){
 IDTR idtr;
 void PrepareInterrupts(){
     idtr.Limit = 0x0FFF;
-    idtr.Offset = (uint64_t)GlobalAllocator.RequestPage();
+    idtr.Offset = (uint64_t)AlocadorGlobal.RequisitarPagina();
 
     IDTDescEntry* int_PageFault = (IDTDescEntry*)(idtr.Offset + 0xE * sizeof(IDTDescEntry));
     int_PageFault->SetOffset((uint64_t)Manipulador_FalhaDePagina);
