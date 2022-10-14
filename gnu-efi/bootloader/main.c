@@ -5,11 +5,11 @@
 typedef unsigned long long size_t;
 
 typedef struct {
-	void* BaseAddress;
+	void* EnderecoBase;
 	size_t BufferSize;
 	unsigned int Width;
 	unsigned int Height;
-	unsigned int PixelsPerScanLine;
+	unsigned int PixelsPorLinhaEscaneada;
 } Framebuffer;
 
 #define PSF1_MAGIC0 0x36
@@ -44,11 +44,11 @@ Framebuffer* InitializeGOP(){
 		Print(L"GOP located\n\r");
 	}
 
-	framebuffer.BaseAddress = (void*)gop->Mode->FrameBufferBase;
+	framebuffer.EnderecoBase = (void*)gop->Mode->FrameBufferBase;
 	framebuffer.BufferSize = gop->Mode->FrameBufferSize;
 	framebuffer.Width = gop->Mode->Info->HorizontalResolution;
 	framebuffer.Height = gop->Mode->Info->VerticalResolution;
-	framebuffer.PixelsPerScanLine = gop->Mode->Info->PixelsPerScanLine;
+	framebuffer.PixelsPorLinhaEscaneada = gop->Mode->Info->PixelsPorLinhaEscaneada;
 
 	return &framebuffer;
 	
@@ -122,7 +122,7 @@ typedef struct {
 	Framebuffer* framebuffer;
 	PSF1_FONT* psf1_Font;
 	EFI_MEMORY_DESCRIPTOR* mMap;
-	UINTN mMapSize;
+	UINTN mMapTamanho;
 	UINTN mMapDescSize;
 } BootInfo;
 
@@ -211,11 +211,11 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	Framebuffer* newBuffer = InitializeGOP();
 
 	Print(L"Base: 0x%x\n\rSize: 0x%x\n\rWidth: %d\n\rHeight: %d\n\rPixelsPerScanline: %d\n\r", 
-	newBuffer->BaseAddress, 
+	newBuffer->EnderecoBase, 
 	newBuffer->BufferSize, 
 	newBuffer->Width, 
 	newBuffer->Height, 
-	newBuffer->PixelsPerScanLine);
+	newBuffer->PixelsPorLinhaEscaneada);
 
 	EFI_MEMORY_DESCRIPTOR* Map = NULL;
 	UINTN MapSize, MapKey;
@@ -235,7 +235,7 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	bootInfo.framebuffer = newBuffer;
 	bootInfo.psf1_Font = newFont;
 	bootInfo.mMap = Map;
-	bootInfo.mMapSize = MapSize;
+	bootInfo.mMapTamanho = MapSize;
 	bootInfo.mMapDescSize = DescriptorSize;
 
 	SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);

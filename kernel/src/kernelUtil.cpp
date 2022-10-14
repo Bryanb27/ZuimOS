@@ -4,12 +4,12 @@
 #include "interrupts/interrupts.h"
 
 KernelInfo kernelInfo; 
-PageTableManager pageTableManager = NULL;
+GerenciadorTabelaDePaginas gerenciadorTabelaDePaginas = NULL;
 void PrepareMemory(BootInfo* bootInfo){
-    uint64_t mMapEntries = bootInfo->mMapSize / bootInfo->mMapDescSize;
+    uint64_t mMapEntradas = bootInfo->mMapTamanho / bootInfo->mMapDescSize;
 
     GlobalAllocator = PageFrameAllocator();
-    GlobalAllocator.ReadEFIMemoryMap(bootInfo->mMap, bootInfo->mMapSize, bootInfo->mMapDescSize);
+    GlobalAllocator.ReadEFIMemoryMap(bootInfo->mMap, bootInfo->mMapTamanho, bootInfo->mMapDescSize);
 
     uint64_t kernelSize = (uint64_t)&_KernelEnd - (uint64_t)&_KernelStart;
     uint64_t kernelPages = (uint64_t)kernelSize / 4096 + 1;
@@ -19,22 +19,22 @@ void PrepareMemory(BootInfo* bootInfo){
     PageTable* PML4 = (PageTable*)GlobalAllocator.RequestPage();
     memset(PML4, 0, 0x1000);
 
-    pageTableManager = PageTableManager(PML4);
+    gerenciadorTabelaDePaginas = GerenciadorTabelaDePaginas(PML4);
 
-    for (uint64_t t = 0; t < GetMemorySize(bootInfo->mMap, mMapEntries, bootInfo->mMapDescSize); t+= 0x1000){
-        pageTableManager.MapMemory((void*)t, (void*)t);
+    for (uint64_t t = 0; t < GetMemorySize(bootInfo->mMap, mMapEntradas, bootInfo->mMapDescSize); t+= 0x1000){
+        gerenciadorTabelaDePaginas.MapMemory((void*)t, (void*)t);
     }
 
-    uint64_t fbBase = (uint64_t)bootInfo->framebuffer->BaseAddress;
+    uint64_t fbBase = (uint64_t)bootInfo->framebuffer->EnderecoBase;
     uint64_t fbSize = (uint64_t)bootInfo->framebuffer->BufferSize + 0x1000;
     GlobalAllocator.LockPages((void*)fbBase, fbSize/ 0x1000 + 1);
     for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096){
-        pageTableManager.MapMemory((void*)t, (void*)t);
+        gerenciadorTabelaDePaginas.MapMemory((void*)t, (void*)t);
     }
 
     asm ("mov %0, %%cr3" : : "r" (PML4));
 
-    kernelInfo.pageTableManager = &pageTableManager;
+    kernelInfo.gerenciadorTabelaDePaginas = &gerenciadorTabelaDePaginas;
 }
 
 IDTR idtr;
@@ -50,9 +50,9 @@ void PrepareInterrupts(){
     asm ("lidt %0" : : "m" (idtr));
 }
 
-BasicRenderer r = BasicRenderer(NULL, NULL);
+RenderBasico r = RenderBasico(NULL, NULL);
 KernelInfo InitializeKernel(BootInfo* bootInfo){
-    r = BasicRenderer(bootInfo->framebuffer, bootInfo->psf1_Font);
+    r = RenderBasico(bootInfo->framebuffer, bootInfo->psf1_Font);
     GlobalRenderer = &r;
 
     GDTDescriptor gdtDescriptor;
@@ -62,7 +62,7 @@ KernelInfo InitializeKernel(BootInfo* bootInfo){
 
     PrepareMemory(bootInfo);
 
-    memset(bootInfo->framebuffer->BaseAddress, 0, bootInfo->framebuffer->BufferSize);
+    memset(bootInfo->framebuffer->EnderecoBase, 0, bootInfo->framebuffer->BufferSize);
 
     PrepareInterrupts();
 

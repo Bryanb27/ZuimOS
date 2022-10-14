@@ -800,7 +800,7 @@ _IPrint (
     va_copy(ps.args, args);
 
     if (Column != (UINTN) -1) {
-        uefi_call_wrapper(Out->SetCursorPosition, 3, Out, Column, Row);
+        uefi_call_wrapper(Out->SetPosicaoCursor, 3, Out, Column, Row);
     }
 
     back = _Print (&ps);

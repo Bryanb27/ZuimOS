@@ -1,14 +1,14 @@
-#include "PageTableManager.h"
+#include "GerenciadorTabelaDePaginas.h"
 #include "PageMapIndexer.h"
 #include <stdint.h>
 #include "PageFrameAllocator.h"
 #include "../memory.h"
 
-PageTableManager::PageTableManager(PageTable* PML4Address){
+GerenciadorTabelaDePaginas::GerenciadorTabelaDePaginas(PageTable* PML4Address){
     this->PML4 = PML4Address;
 }
 
-void PageTableManager::MapMemory(void* virtualMemory, void* physicalMemory){
+void GerenciadorTabelaDePaginas::MapMemory(void* virtualMemory, void* physicalMemory){
     PageMapIndexer indexer = PageMapIndexer((uint64_t)virtualMemory);
     PageDirectoryEntry PDE;
 

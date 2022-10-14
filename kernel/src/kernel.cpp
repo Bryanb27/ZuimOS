@@ -3,7 +3,7 @@
 extern "C" void _start(BootInfo* bootInfo){
 
     KernelInfo kernelInfo = InitializeKernel(bootInfo);
-    PageTableManager* pageTableManager = kernelInfo.pageTableManager;
+    GerenciadorTabelaDePaginas* gerenciadorTabelaDePaginas = kernelInfo.gerenciadorTabelaDePaginas;
 
     GlobalRenderer->Print("Kernel carregado mano");
 

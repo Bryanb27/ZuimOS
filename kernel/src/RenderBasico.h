@@ -3,15 +3,15 @@
 #include "Framebuffer.h"
 #include "simpleFonts.h" 
 
-class BasicRenderer{
+class RenderBasico{
     public:
-    BasicRenderer(Framebuffer* targetFramebuffer, PSF1_FONT* psf1_Font);
-    Point CursorPosition;
-    Framebuffer* TargetFramebuffer;
+    RenderBasico(Framebuffer* framebufferAlvo, PSF1_FONT* psf1_Font);
+    Point PosicaoCursor;
+    Framebuffer* FramebufferAlvo;
     PSF1_FONT* PSF1_Font;
-    unsigned int Colour;
+    unsigned int Cor;
     void Print(const char* str);
     void PutChar(char chr, unsigned int xOff, unsigned int yOff);
 };
 
-extern BasicRenderer* GlobalRenderer;
+extern RenderBasico* GlobalRenderer;

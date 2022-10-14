@@ -88,7 +88,7 @@ draw_boxes(EFI_GRAPHICS_OUTPUT_PROTOCOL *gop)
 		if (CompareMem(info, gop->Mode->Info, sizeof (*info)))
 			continue;
 
-		NumPixels = info->VerticalResolution * info->PixelsPerScanLine;
+		NumPixels = info->VerticalResolution * info->PixelsPorLinhaEscaneada;
 		BufferSize = NumPixels * sizeof(UINT32);
 		if (BufferSize == gop->Mode->FrameBufferSize) {
 			CopySize = BufferSize;
@@ -107,7 +107,7 @@ draw_boxes(EFI_GRAPHICS_OUTPUT_PROTOCOL *gop)
 		}
 
 		fill_boxes(PixelBuffer, info->HorizontalResolution,
-			   info->VerticalResolution, info->PixelsPerScanLine,
+			   info->VerticalResolution, info->PixelsPorLinhaEscaneada,
 			   info->PixelFormat, info->PixelInformation);
 
 		if (info->PixelFormat == PixelBltOnly) {
