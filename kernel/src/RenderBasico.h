@@ -14,4 +14,4 @@ class RenderBasico{
     void PutChar(char chr, unsigned int xOff, unsigned int yOff);
 };
 
-extern RenderBasico* GlobalRenderer;
+extern RenderBasico* RenderizadorGlobal;

@@ -4,7 +4,7 @@
 struct Framebuffer{
 	void* EnderecoBase;
 	size_t BufferSize;
-	unsigned int Width;
+	unsigned int Largura;
 	unsigned int Height;
 	unsigned int PixelsPorLinhaEscaneada;
 };

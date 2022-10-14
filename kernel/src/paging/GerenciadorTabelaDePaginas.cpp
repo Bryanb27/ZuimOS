@@ -1,7 +1,7 @@
 #include "GerenciadorTabelaDePaginas.h"
 #include "PageMapIndexer.h"
 #include <stdint.h>
-#include "PageFrameAllocator.h"
+#include "AlocadorDePageFrame.h"
 #include "../memory.h"
 
 GerenciadorTabelaDePaginas::GerenciadorTabelaDePaginas(PageTable* PML4Address){

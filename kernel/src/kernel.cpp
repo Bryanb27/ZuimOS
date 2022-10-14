@@ -2,10 +2,10 @@
 
 extern "C" void _start(BootInfo* bootInfo){
 
-    KernelInfo kernelInfo = InitializeKernel(bootInfo);
+    KernelInfo kernelInfo = IniciarKernel(bootInfo);
     GerenciadorTabelaDePaginas* gerenciadorTabelaDePaginas = kernelInfo.gerenciadorTabelaDePaginas;
 
-    GlobalRenderer->Print("Kernel carregado mano");
+    RenderizadorGlobal->Print("Kernel carregado mano");
 
     int* test = (int*)0x80000000000;
     *test = 2;

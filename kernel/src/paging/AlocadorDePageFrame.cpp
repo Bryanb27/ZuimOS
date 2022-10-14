@@ -1,33 +1,33 @@
-#include "PageFrameAllocator.h"
+#include "AlocadorDePageFrame.h"
 
 uint64_t freeMemory;
 uint64_t reservedMemory;
 uint64_t usedMemory;
 bool Initialized = false;
-PageFrameAllocator GlobalAllocator;
+AlocadorDePageFrame GlobalAllocator;
 
-void PageFrameAllocator::ReadEFIMemoryMap(EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapTamanho, size_t mMapDescSize){
+void AlocadorDePageFrame::ReadEFIMemoryMap(EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapTamanho, size_t mMapTamanhoDesc){
     if (Initialized) return;
 
     Initialized = true;
 
-    uint64_t mMapEntradas = mMapTamanho / mMapDescSize;
+    uint64_t mMapEntradas = mMapTamanho / mMapTamanhoDesc;
 
     void* largestFreeMemSeg = NULL;
     size_t largestFreeMemSegSize = 0;
 
     for (int i = 0; i < mMapEntradas; i++){
-        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint64_t)mMap + (i * mMapDescSize));
+        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint64_t)mMap + (i * mMapTamanhoDesc));
         if (desc->type == 7){ // type = EfiConventionalMemory
-            if (desc->numPages * 4096 > largestFreeMemSegSize)
+            if (desc->numeroPaginas * 4096 > largestFreeMemSegSize)
             {
                 largestFreeMemSeg = desc->physAddr;
-                largestFreeMemSegSize = desc->numPages * 4096;
+                largestFreeMemSegSize = desc->numeroPaginas * 4096;
             }
         }
     }
 
-    uint64_t memorySize = GetMemorySize(mMap, mMapEntradas, mMapDescSize);
+    uint64_t memorySize = GetMemorySize(mMap, mMapEntradas, mMapTamanhoDesc);
     freeMemory = memorySize;
     uint64_t bitmapSize = memorySize / 4096 / 8 + 1;
 
@@ -36,14 +36,14 @@ void PageFrameAllocator::ReadEFIMemoryMap(EFI_MEMORY_DESCRIPTOR* mMap, size_t mM
     LockPages(&PageBitmap, PageBitmap.Size / 4096 + 1);
 
     for (int i = 0; i < mMapEntradas; i++){
-        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint64_t)mMap + (i * mMapDescSize));
+        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint64_t)mMap + (i * mMapTamanhoDesc));
         if (desc->type != 7){ // not efiConventionalMemory
-            ReservePages(desc->physAddr, desc->numPages);
+            ReservePages(desc->physAddr, desc->numeroPaginas);
         }
     }
 }
 
-void PageFrameAllocator::InitBitmap(size_t bitmapSize, void* bufferAddress){
+void AlocadorDePageFrame::InitBitmap(size_t bitmapSize, void* bufferAddress){
     PageBitmap.Size = bitmapSize;
     PageBitmap.Buffer = (uint8_t*)bufferAddress;
     for (int i = 0; i < bitmapSize; i++){
@@ -51,7 +51,7 @@ void PageFrameAllocator::InitBitmap(size_t bitmapSize, void* bufferAddress){
     }
 }
 uint64_t pageBitmapIndex = 0;
-void* PageFrameAllocator::RequestPage(){
+void* AlocadorDePageFrame::RequestPage(){
     for (; pageBitmapIndex < PageBitmap.Size * 8; pageBitmapIndex++){
         if (PageBitmap[pageBitmapIndex] == true) continue;
         LockPage((void*)(pageBitmapIndex * 4096));
@@ -61,7 +61,7 @@ void* PageFrameAllocator::RequestPage(){
     return NULL; // Page Frame Swap to file
 }
 
-void PageFrameAllocator::FreePage(void* address){
+void AlocadorDePageFrame::FreePage(void* address){
     uint64_t index = (uint64_t)address / 4096;
     if (PageBitmap[index] == false) return;
     if (PageBitmap.Set(index, false)){
@@ -71,13 +71,13 @@ void PageFrameAllocator::FreePage(void* address){
     }
 }
 
-void PageFrameAllocator::FreePages(void* address, uint64_t pageCount){
+void AlocadorDePageFrame::FreePages(void* address, uint64_t pageCount){
     for (int t = 0; t < pageCount; t++){
         FreePage((void*)((uint64_t)address + (t * 4096)));
     }
 }
 
-void PageFrameAllocator::LockPage(void* address){
+void AlocadorDePageFrame::LockPage(void* address){
     uint64_t index = (uint64_t)address / 4096;
     if (PageBitmap[index] == true) return;
     if (PageBitmap.Set(index, true)){
@@ -86,13 +86,13 @@ void PageFrameAllocator::LockPage(void* address){
     }
 }
 
-void PageFrameAllocator::LockPages(void* address, uint64_t pageCount){
+void AlocadorDePageFrame::LockPages(void* address, uint64_t pageCount){
     for (int t = 0; t < pageCount; t++){
         LockPage((void*)((uint64_t)address + (t * 4096)));
     }
 }
 
-void PageFrameAllocator::UnreservePage(void* address){
+void AlocadorDePageFrame::UnreservePage(void* address){
     uint64_t index = (uint64_t)address / 4096;
     if (PageBitmap[index] == false) return;
     if (PageBitmap.Set(index, false)){
@@ -102,13 +102,13 @@ void PageFrameAllocator::UnreservePage(void* address){
     }
 }
 
-void PageFrameAllocator::UnreservePages(void* address, uint64_t pageCount){
+void AlocadorDePageFrame::UnreservePages(void* address, uint64_t pageCount){
     for (int t = 0; t < pageCount; t++){
         UnreservePage((void*)((uint64_t)address + (t * 4096)));
     }
 }
 
-void PageFrameAllocator::ReservePage(void* address){
+void AlocadorDePageFrame::ReservePage(void* address){
     uint64_t index = (uint64_t)address / 4096;
     if (PageBitmap[index] == true) return;
     if (PageBitmap.Set(index, true)){
@@ -117,18 +117,18 @@ void PageFrameAllocator::ReservePage(void* address){
     }
 }
 
-void PageFrameAllocator::ReservePages(void* address, uint64_t pageCount){
+void AlocadorDePageFrame::ReservePages(void* address, uint64_t pageCount){
     for (int t = 0; t < pageCount; t++){
         ReservePage((void*)((uint64_t)address + (t * 4096)));
     }
 }
 
-uint64_t PageFrameAllocator::GetFreeRAM(){
+uint64_t AlocadorDePageFrame::GetFreeRAM(){
     return freeMemory;
 }
-uint64_t PageFrameAllocator::GetUsedRAM(){
+uint64_t AlocadorDePageFrame::GetUsedRAM(){
     return usedMemory;
 }
-uint64_t PageFrameAllocator::GetReservedRAM(){
+uint64_t AlocadorDePageFrame::GetReservedRAM(){
     return reservedMemory;
 }

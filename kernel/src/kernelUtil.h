@@ -6,7 +6,7 @@
 #include "efiMemory.h"
 #include "memory.h"
 #include "Bitmap.h"
-#include "paging/PageFrameAllocator.h"
+#include "paging/AlocadorDePageFrame.h"
 #include "paging/PageMapIndexer.h"
 #include "paging/paging.h"
 #include "paging/GerenciadorTabelaDePaginas.h"
@@ -16,7 +16,7 @@ struct BootInfo {
 	PSF1_FONT* psf1_Font;
 	EFI_MEMORY_DESCRIPTOR* mMap;
 	uint64_t mMapTamanho;
-	uint64_t mMapDescSize;
+	uint64_t mMapTamanhoDesc;
 } ;
 
 extern uint64_t _KernelStart;
@@ -26,4 +26,4 @@ struct KernelInfo {
     GerenciadorTabelaDePaginas* gerenciadorTabelaDePaginas;
 };
 
-KernelInfo InitializeKernel(BootInfo* BootInfo);
+KernelInfo IniciarKernel(BootInfo* BootInfo);

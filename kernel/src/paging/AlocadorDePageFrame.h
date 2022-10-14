@@ -4,9 +4,9 @@
 #include "../Bitmap.h"
 #include "../memory.h"
 
-class PageFrameAllocator {
+class AlocadorDePageFrame {
     public:
-    void ReadEFIMemoryMap(EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapTamanho, size_t mMapDescSize);
+    void ReadEFIMemoryMap(EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapTamanho, size_t mMapTamanhoDesc);
     Bitmap PageBitmap;
     void FreePage(void* address);
     void FreePages(void* address, uint64_t pageCount);
@@ -27,4 +27,4 @@ class PageFrameAllocator {
 
 };
 
-extern PageFrameAllocator GlobalAllocator;
+extern AlocadorDePageFrame GlobalAllocator;

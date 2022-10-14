@@ -6,10 +6,10 @@
 KernelInfo kernelInfo; 
 GerenciadorTabelaDePaginas gerenciadorTabelaDePaginas = NULL;
 void PrepareMemory(BootInfo* bootInfo){
-    uint64_t mMapEntradas = bootInfo->mMapTamanho / bootInfo->mMapDescSize;
+    uint64_t mMapEntradas = bootInfo->mMapTamanho / bootInfo->mMapTamanhoDesc;
 
-    GlobalAllocator = PageFrameAllocator();
-    GlobalAllocator.ReadEFIMemoryMap(bootInfo->mMap, bootInfo->mMapTamanho, bootInfo->mMapDescSize);
+    GlobalAllocator = AlocadorDePageFrame();
+    GlobalAllocator.ReadEFIMemoryMap(bootInfo->mMap, bootInfo->mMapTamanho, bootInfo->mMapTamanhoDesc);
 
     uint64_t kernelSize = (uint64_t)&_KernelEnd - (uint64_t)&_KernelStart;
     uint64_t kernelPages = (uint64_t)kernelSize / 4096 + 1;
@@ -21,7 +21,7 @@ void PrepareMemory(BootInfo* bootInfo){
 
     gerenciadorTabelaDePaginas = GerenciadorTabelaDePaginas(PML4);
 
-    for (uint64_t t = 0; t < GetMemorySize(bootInfo->mMap, mMapEntradas, bootInfo->mMapDescSize); t+= 0x1000){
+    for (uint64_t t = 0; t < GetMemorySize(bootInfo->mMap, mMapEntradas, bootInfo->mMapTamanhoDesc); t+= 0x1000){
         gerenciadorTabelaDePaginas.MapMemory((void*)t, (void*)t);
     }
 
@@ -43,7 +43,7 @@ void PrepareInterrupts(){
     idtr.Offset = (uint64_t)GlobalAllocator.RequestPage();
 
     IDTDescEntry* int_PageFault = (IDTDescEntry*)(idtr.Offset + 0xE * sizeof(IDTDescEntry));
-    int_PageFault->SetOffset((uint64_t)PageFault_Handler);
+    int_PageFault->SetOffset((uint64_t)Manipulador_FalhaDePagina);
     int_PageFault->type_attr = IDT_TA_InterruptGate;
     int_PageFault->selector = 0x08;
 
@@ -51,9 +51,9 @@ void PrepareInterrupts(){
 }
 
 RenderBasico r = RenderBasico(NULL, NULL);
-KernelInfo InitializeKernel(BootInfo* bootInfo){
+KernelInfo IniciarKernel(BootInfo* bootInfo){
     r = RenderBasico(bootInfo->framebuffer, bootInfo->psf1_Font);
-    GlobalRenderer = &r;
+    RenderizadorGlobal = &r;
 
     GDTDescriptor gdtDescriptor;
     gdtDescriptor.Size = sizeof(GDT) - 1;

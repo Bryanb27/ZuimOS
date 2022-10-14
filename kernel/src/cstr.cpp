@@ -1,29 +1,29 @@
 #include "cstr.h"
 
-char uintTo_StringOutput[128];
+char uintPara_StringSaida[128];
 const char* to_string(uint64_t value){
     uint8_t size;
-    uint64_t sizeTest = value;
-    while (sizeTest / 10 > 0){
-        sizeTest /= 10;
+    uint64_t testeTamanho = value;
+    while (testeTamanho / 10 > 0){
+        testeTamanho /= 10;
         size++;
     }
 
     uint8_t index = 0;
     while(value / 10 > 0){
-        uint8_t remainder = value % 10;
+        uint8_t lembrete = value % 10;
         value /= 10;
-        uintTo_StringOutput[size - index] = remainder + '0';
+        uintPara_StringSaida[size - index] = lembrete + '0';
         index++;
     }
-    uint8_t remainder = value % 10;
-    uintTo_StringOutput[size - index] = remainder + '0';
-    uintTo_StringOutput[size + 1] = 0; 
-    return uintTo_StringOutput;
+    uint8_t lembrete = value % 10;
+    uintPara_StringSaida[size - index] = lembrete + '0';
+    uintPara_StringSaida[size + 1] = 0; 
+    return uintPara_StringSaida;
 }
 
-char hexTo_StringOutput[128];
-const char* to_hstring(uint64_t value){
+char hexPara_StringSaida[128];
+const char* para_hstring(uint64_t value){
     uint64_t* valPtr = &value;
     uint8_t* ptr;
     uint8_t tmp;
@@ -31,16 +31,16 @@ const char* to_hstring(uint64_t value){
     for (uint8_t i = 0; i < size; i++){
         ptr = ((uint8_t*)valPtr + i);
         tmp = ((*ptr & 0xF0) >> 4);
-        hexTo_StringOutput[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
+        hexPara_StringSaida[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
         tmp = ((*ptr & 0x0F));
-        hexTo_StringOutput[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
+        hexPara_StringSaida[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
     }
-    hexTo_StringOutput[size + 1] = 0;
-    return hexTo_StringOutput;
+    hexPara_StringSaida[size + 1] = 0;
+    return hexPara_StringSaida;
 }
 
-char hexTo_StringOutput32[128];
-const char* to_hstring(uint32_t value){
+char hexPara_StringSaida32[128];
+const char* para_hstring(uint32_t value){
     uint32_t* valPtr = &value;
     uint8_t* ptr;
     uint8_t tmp;
@@ -48,16 +48,16 @@ const char* to_hstring(uint32_t value){
     for (uint8_t i = 0; i < size; i++){
         ptr = ((uint8_t*)valPtr + i);
         tmp = ((*ptr & 0xF0) >> 4);
-        hexTo_StringOutput32[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
+        hexPara_StringSaida32[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
         tmp = ((*ptr & 0x0F));
-        hexTo_StringOutput32[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
+        hexPara_StringSaida32[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
     }
-    hexTo_StringOutput32[size + 1] = 0;
-    return hexTo_StringOutput32;
+    hexPara_StringSaida32[size + 1] = 0;
+    return hexPara_StringSaida32;
 }
 
-char hexTo_StringOutput16[128];
-const char* to_hstring(uint16_t value){
+char hexPara_StringSaida16[128];
+const char* para_hstring(uint16_t value){
     uint16_t* valPtr = &value;
     uint8_t* ptr;
     uint8_t tmp;
@@ -65,16 +65,16 @@ const char* to_hstring(uint16_t value){
     for (uint8_t i = 0; i < size; i++){
         ptr = ((uint8_t*)valPtr + i);
         tmp = ((*ptr & 0xF0) >> 4);
-        hexTo_StringOutput16[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
+        hexPara_StringSaida16[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
         tmp = ((*ptr & 0x0F));
-        hexTo_StringOutput16[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
+        hexPara_StringSaida16[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
     }
-    hexTo_StringOutput16[size + 1] = 0;
-    return hexTo_StringOutput16;
+    hexPara_StringSaida16[size + 1] = 0;
+    return hexPara_StringSaida16;
 }
 
-char hexTo_StringOutput8[128];
-const char* to_hstring(uint8_t value){
+char hexPara_StringSaida8[128];
+const char* para_hstring(uint8_t value){
     uint8_t* valPtr = &value;
     uint8_t* ptr;
     uint8_t tmp;
@@ -82,42 +82,42 @@ const char* to_hstring(uint8_t value){
     for (uint8_t i = 0; i < size; i++){
         ptr = ((uint8_t*)valPtr + i);
         tmp = ((*ptr & 0xF0) >> 4);
-        hexTo_StringOutput8[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
+        hexPara_StringSaida8[size - (i * 2 + 1)] = tmp + (tmp > 9 ? 55 : '0');
         tmp = ((*ptr & 0x0F));
-        hexTo_StringOutput8[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
+        hexPara_StringSaida8[size - (i * 2)] = tmp + (tmp > 9 ? 55 : '0');
     }
-    hexTo_StringOutput8[size + 1] = 0;
-    return hexTo_StringOutput8;
+    hexPara_StringSaida8[size + 1] = 0;
+    return hexPara_StringSaida8;
 }
 
-char intTo_StringOutput[128];
+char intPara_StringSaida[128];
 const char* to_string(int64_t value){
     uint8_t isNegative = 0;
 
     if (value < 0){
         isNegative = 1;
         value *= -1;
-        intTo_StringOutput[0] = '-';
+        intPara_StringSaida[0] = '-';
     }
 
     uint8_t size;
-    uint64_t sizeTest = value;
-    while (sizeTest / 10 > 0){
-        sizeTest /= 10;
+    uint64_t testeTamanho = value;
+    while (testeTamanho / 10 > 0){
+        testeTamanho /= 10;
         size++;
     }
 
     uint8_t index = 0;
     while(value / 10 > 0){
-        uint8_t remainder = value % 10;
+        uint8_t lembrete = value % 10;
         value /= 10;
-        intTo_StringOutput[isNegative + size - index] = remainder + '0';
+        intPara_StringSaida[isNegative + size - index] = lembrete + '0';
         index++;
     }
-    uint8_t remainder = value % 10;
-    intTo_StringOutput[isNegative + size - index] = remainder + '0';
-    intTo_StringOutput[isNegative + size + 1] = 0; 
-    return intTo_StringOutput;
+    uint8_t lembrete = value % 10;
+    intPara_StringSaida[isNegative + size - index] = lembrete + '0';
+    intPara_StringSaida[isNegative + size + 1] = 0; 
+    return intPara_StringSaida;
 }
 
 char doubleTo_StringOutput[128];

@@ -1,6 +1,6 @@
 #include "RenderBasico.h"
 
-RenderBasico* GlobalRenderer;
+RenderBasico* RenderizadorGlobal;
 
 RenderBasico::RenderBasico(Framebuffer* framebufferAlvo, PSF1_FONT* psf1_Font)
 {
@@ -17,7 +17,7 @@ void RenderBasico::Print(const char* str)
     while(*chr != 0){
         PutChar(*chr, PosicaoCursor.X, PosicaoCursor.Y);
         PosicaoCursor.X+=8;
-        if(PosicaoCursor.X + 8 > FramebufferAlvo->Width)
+        if(PosicaoCursor.X + 8 > FramebufferAlvo->Largura)
         {
             PosicaoCursor.X = 0;
             PosicaoCursor.Y += 16;
