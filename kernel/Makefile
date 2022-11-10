@@ -1,5 +1,5 @@
 
-OSNAME = ZuimOS
+OSNAME = CustomOS
 
 GNUEFI = ../gnu-efi
 OVMFDIR = ../OVMFbin

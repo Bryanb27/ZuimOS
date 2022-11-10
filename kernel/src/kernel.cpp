@@ -2,13 +2,14 @@
 
 extern "C" void _start(BootInfo* bootInfo){
 
-    KernelInfo kernelInfo = IniciarKernel(bootInfo);
-    GerenciadorTabelaDePaginas* gerenciadorTabelaDePaginas = kernelInfo.gerenciadorTabelaDePaginas;
+    KernelInfo kernelInfo = InitializeKernel(bootInfo);
+    PageTableManager* pageTableManager = kernelInfo.pageTableManager;
 
-    RenderizadorGlobal->Print("Kernel carregado mano");
-
-    int* test = (int*)0x80000000000;
-    *test = 2;
+    GlobalRenderer->Print("Kernel Initialized Successfully");
+    GlobalRenderer->Next();
+    GlobalRenderer->Print("Type help for a list of commands");
+    GlobalRenderer->Next();
+    GlobalRenderer->Print("ZuimOS:> ");
 
     while(true);
 }

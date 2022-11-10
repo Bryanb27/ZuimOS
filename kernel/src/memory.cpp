@@ -1,17 +1,17 @@
 
 #include "memory.h"
 
-uint64_t GetMemorySize(EFI_MEMORY_DESCRIPTOR* mMap, uint64_t mMapEntradas, uint64_t mMapTamanhoDesc){
+uint64_t GetMemorySize(EFI_MEMORY_DESCRIPTOR* mMap, uint64_t mMapEntries, uint64_t mMapDescSize){
 
-    static uint64_t tamanhoMemoriaEmBytes = 0;
-    if (tamanhoMemoriaEmBytes > 0) return tamanhoMemoriaEmBytes;
+    static uint64_t memorySizeBytes = 0;
+    if (memorySizeBytes > 0) return memorySizeBytes;
 
-    for (int i = 0; i < mMapEntradas; i++){
-        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint64_t)mMap + (i * mMapTamanhoDesc));
-        tamanhoMemoriaEmBytes += desc->numeroPaginas * 4096;
+    for (int i = 0; i < mMapEntries; i++){
+        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint64_t)mMap + (i * mMapDescSize));
+        memorySizeBytes += desc->numPages * 4096;
     }
 
-    return tamanhoMemoriaEmBytes;
+    return memorySizeBytes;
 
 }
 

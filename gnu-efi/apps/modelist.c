@@ -62,7 +62,7 @@ print_modes(EFI_GRAPHICS_OUTPUT_PROTOCOL *gop)
 				Print(L"(Invalid pixel format)");
 				break;
 		}
-		Print(L" pitch %d\n", info->PixelsPorLinhaEscaneada);
+		Print(L" pitch %d\n", info->PixelsPerScanLine);
 	}
 }
 

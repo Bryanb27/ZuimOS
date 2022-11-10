@@ -145,7 +145,7 @@ typedef struct _SIMPLE_TEXT_OUTPUT_INTERFACE {
     EFI_TEXT_SET_ATTRIBUTE          SetAttribute;
 
     EFI_TEXT_CLEAR_SCREEN           ClearScreen;
-    EFI_TEXT_SET_CURSOR_POSITION    SetPosicaoCursor;
+    EFI_TEXT_SET_CURSOR_POSITION    SetCursorPosition;
     EFI_TEXT_ENABLE_CURSOR          EnableCursor;
 
     // Current mode

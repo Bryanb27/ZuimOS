@@ -1,23 +1,23 @@
 #include "paging.h"
 
-void EntradaDiretorioDePagina::SetFlag(PT_Flag flag, bool enabled){
-    uint64_t seletorDeBit = (uint64_t)1 << flag;
-    Value &= ~seletorDeBit;
+void PageDirectoryEntry::SetFlag(PT_Flag flag, bool enabled){
+    uint64_t bitSelector = (uint64_t)1 << flag;
+    Value &= ~bitSelector;
     if (enabled){
-        Value |= seletorDeBit;
+        Value |= bitSelector;
     }
 }
 
-bool EntradaDiretorioDePagina::GetFlag(PT_Flag flag){
-    uint64_t seletorDeBit = (uint64_t)1 << flag;
-    return Value & seletorDeBit > 0 ? true : false;
+bool PageDirectoryEntry::GetFlag(PT_Flag flag){
+    uint64_t bitSelector = (uint64_t)1 << flag;
+    return Value & bitSelector > 0 ? true : false;
 }
 
-uint64_t EntradaDiretorioDePagina::GetEndereco(){
+uint64_t PageDirectoryEntry::GetAddress(){
     return (Value & 0x000ffffffffff000) >> 12;
 }
 
-void EntradaDiretorioDePagina::SetAddress(uint64_t address){
+void PageDirectoryEntry::SetAddress(uint64_t address){
     address &= 0x000000ffffffffff;
     Value &= 0xfff0000000000fff;
     Value |= (address << 12);

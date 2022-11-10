@@ -5,11 +5,11 @@
 typedef unsigned long long size_t;
 
 typedef struct {
-	void* EnderecoBase;
+	void* BaseAddress;
 	size_t BufferSize;
 	unsigned int Width;
 	unsigned int Height;
-	unsigned int PixelsPorLinhaEscaneada;
+	unsigned int PixelsPerScanLine;
 } Framebuffer;
 
 #define PSF1_MAGIC0 0x36
@@ -44,11 +44,11 @@ Framebuffer* InitializeGOP(){
 		Print(L"GOP located\n\r");
 	}
 
-	framebuffer.EnderecoBase = (void*)gop->Mode->FrameBufferBase;
+	framebuffer.BaseAddress = (void*)gop->Mode->FrameBufferBase;
 	framebuffer.BufferSize = gop->Mode->FrameBufferSize;
 	framebuffer.Width = gop->Mode->Info->HorizontalResolution;
 	framebuffer.Height = gop->Mode->Info->VerticalResolution;
-	framebuffer.PixelsPorLinhaEscaneada = gop->Mode->Info->PixelsPorLinhaEscaneada;
+	framebuffer.PixelsPerScanLine = gop->Mode->Info->PixelsPerScanLine;
 
 	return &framebuffer;
 	
@@ -122,20 +122,20 @@ typedef struct {
 	Framebuffer* framebuffer;
 	PSF1_FONT* psf1_Font;
 	EFI_MEMORY_DESCRIPTOR* mMap;
-	UINTN mMapTamanho;
+	UINTN mMapSize;
 	UINTN mMapDescSize;
 } BootInfo;
 
 EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	InitializeLib(ImageHandle, SystemTable);
-	Print(L"String de teste do Talko \n\r");
+	Print(L"String blah blah blah \n\r");
 
 	EFI_FILE* Kernel = LoadFile(NULL, L"kernel.elf", ImageHandle, SystemTable);
 	if (Kernel == NULL){
-		Print(L"Falha carregando o kernel \n\r");
+		Print(L"Could not load kernel \n\r");
 	}
 	else{
-		Print(L"Kernel carregado mano \n\r");
+		Print(L"Kernel Loaded Successfully \n\r");
 	}
 
 	Elf64_Ehdr header;
@@ -159,11 +159,11 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 		header.e_version != EV_CURRENT
 	)
 	{
-		Print(L"kernel sem formato funfando\r\n");
+		Print(L"kernel format is bad\r\n");
 	}
 	else
 	{
-		Print(L"cabecalho do kernel funfando\r\n");
+		Print(L"kernel header successfully verified\r\n");
 	}
 
 	Elf64_Phdr* phdrs;
@@ -195,27 +195,27 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 		}
 	}
 
-	Print(L"Kernel carregado\n\r");
+	Print(L"Kernel Loaded\n\r");
 	
 
 	PSF1_FONT* newFont = LoadPSF1Font(NULL, L"zap-light16.psf", ImageHandle, SystemTable);
 	if (newFont == NULL){
-		Print(L"Fonte invalida\n\r");
+		Print(L"Font is not valid or is not found\n\r");
 	}
 	else
 	{
-		Print(L"Fonte carregada. char size = %d\n\r", newFont->psf1_Header->charsize);
+		Print(L"Font found. char size = %d\n\r", newFont->psf1_Header->charsize);
 	}
 	
 
 	Framebuffer* newBuffer = InitializeGOP();
 
 	Print(L"Base: 0x%x\n\rSize: 0x%x\n\rWidth: %d\n\rHeight: %d\n\rPixelsPerScanline: %d\n\r", 
-	newBuffer->EnderecoBase, 
+	newBuffer->BaseAddress, 
 	newBuffer->BufferSize, 
 	newBuffer->Width, 
 	newBuffer->Height, 
-	newBuffer->PixelsPorLinhaEscaneada);
+	newBuffer->PixelsPerScanLine);
 
 	EFI_MEMORY_DESCRIPTOR* Map = NULL;
 	UINTN MapSize, MapKey;
@@ -235,7 +235,7 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	bootInfo.framebuffer = newBuffer;
 	bootInfo.psf1_Font = newFont;
 	bootInfo.mMap = Map;
-	bootInfo.mMapTamanho = MapSize;
+	bootInfo.mMapSize = MapSize;
 	bootInfo.mMapDescSize = DescriptorSize;
 
 	SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);

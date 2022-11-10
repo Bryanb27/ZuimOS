@@ -2,9 +2,9 @@
 #include <stddef.h>
 
 struct Framebuffer{
-	void* EnderecoBase;
+	void* BaseAddress;
 	size_t BufferSize;
-	unsigned int Largura;
+	unsigned int Width;
 	unsigned int Height;
-	unsigned int PixelsPorLinhaEscaneada;
+	unsigned int PixelsPerScanLine;
 };

@@ -855,7 +855,7 @@ typedef struct {
   UINT32                     VerticalResolution;
   EFI_GRAPHICS_PIXEL_FORMAT  PixelFormat;
   EFI_PIXEL_BITMASK          PixelInformation;
-  UINT32                     PixelsPorLinhaEscaneada;
+  UINT32                     PixelsPerScanLine;
 } EFI_GRAPHICS_OUTPUT_MODE_INFORMATION;
 
 /**
