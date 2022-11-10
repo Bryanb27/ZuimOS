@@ -1,3 +1,3 @@
-# PonchoOS
+# ZuimOS
  
-Git repo of the Operating System tutorial series by Poncho
+Git repo of the ZuimOS Operating System based on PonchoOS by Poncho.
