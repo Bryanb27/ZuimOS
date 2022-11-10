@@ -128,14 +128,14 @@ typedef struct {
 
 EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	InitializeLib(ImageHandle, SystemTable);
-	Print(L"String de teste do Talko \n\r");
+	Print(L"String blah blah blah \n\r");
 
 	EFI_FILE* Kernel = LoadFile(NULL, L"kernel.elf", ImageHandle, SystemTable);
 	if (Kernel == NULL){
-		Print(L"Falha carregando o kernel \n\r");
+		Print(L"Could not load kernel \n\r");
 	}
 	else{
-		Print(L"Kernel carregado mano \n\r");
+		Print(L"Kernel Loaded Successfully \n\r");
 	}
 
 	Elf64_Ehdr header;
@@ -159,11 +159,11 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 		header.e_version != EV_CURRENT
 	)
 	{
-		Print(L"kernel sem formato funfando\r\n");
+		Print(L"kernel format is bad\r\n");
 	}
 	else
 	{
-		Print(L"cabecalho do kernel funfando\r\n");
+		Print(L"kernel header successfully verified\r\n");
 	}
 
 	Elf64_Phdr* phdrs;
@@ -195,16 +195,16 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 		}
 	}
 
-	Print(L"Kernel carregado\n\r");
+	Print(L"Kernel Loaded\n\r");
 	
 
 	PSF1_FONT* newFont = LoadPSF1Font(NULL, L"zap-light16.psf", ImageHandle, SystemTable);
 	if (newFont == NULL){
-		Print(L"Fonte invalida\n\r");
+		Print(L"Font is not valid or is not found\n\r");
 	}
 	else
 	{
-		Print(L"Fonte carregada. char size = %d\n\r", newFont->psf1_Header->charsize);
+		Print(L"Font found. char size = %d\n\r", newFont->psf1_Header->charsize);
 	}
 	
 
